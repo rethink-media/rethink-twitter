@@ -188,11 +188,13 @@ def search_30(query, start_date=None, end_date=None, max_results=20, write_csv=F
                                fromDate=start_date,
                                toDate=end_date,
                                maxResults=100
-                              ).items(max_results)
+                              ).items(1000)
+    
+    for tweet in response_1:
+        print(tweet._json['id'])
     
     # gathering Tweet ID's in a list
-    print(response_1)
-    tweet_ids = [tweet._json['id'] for tweet in response_1]
+    #tweet_ids = [tweet._json['id'] for tweet in response_1]
     
     # setting Tweet data to be included in response_2
     tweet_fields = ["text", "attachments", "author_id", "context_annotations", "conversation_id", "created_at",
