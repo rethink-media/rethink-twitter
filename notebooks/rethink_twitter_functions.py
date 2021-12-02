@@ -182,19 +182,19 @@ def search_30(query, start_date=None, end_date=None, max_results=20, write_csv=F
     
     # retrieving Tweets from the past 30 days relevant to query using tweepy's pagination function
     import tweepy
+    import math
     response_1 = tweepy.Cursor(api_1.search_30_day,
                                label="30day",
                                query=f"{query} lang:en",
                                fromDate=start_date,
                                toDate=end_date,
                                maxResults=100
-                              ).items(1000)
-    
-    for tweet in response_1:
-        print(tweet._json['id'])
+                              ).pages(math.ceil(max_results/100))
     
     # gathering Tweet ID's in a list
-    #tweet_ids = [tweet._json['id'] for tweet in response_1]
+    tweet_ids = []
+    for page in response_1:
+        tweet_ids.extend([tweet._json['id'] for tweet in page])
     
     # setting Tweet data to be included in response_2
     tweet_fields = ["text", "attachments", "author_id", "context_annotations", "conversation_id", "created_at",
@@ -255,16 +255,19 @@ def search_full(query, start_date=None, end_date=None, max_results=20, write_csv
     
     # retrieving Tweets from the full tweet archive relevant to query using tweepy's pagination function
     import tweepy
+    import math
     response_1 = tweepy.Cursor(api_1.search_full_archive,
                                label="full",
                                query=f"{query} lang:en",
                                fromDate=start_date,
                                toDate=end_date,
                                maxResults=100
-                              ).items(max_results)
+                              ).pages(math.ceil(max_results/100))
     
     # gathering Tweet ID's in a list
-    tweet_ids = [tweet._json['id'] for tweet in response_1]
+    tweet_ids = []
+    for page in response_1:
+        tweet_ids.extend([tweet._json['id'] for tweet in page])
     
     # setting Tweet data to be included in response
     tweet_fields = ["text", "attachments", "author_id", "context_annotations", "conversation_id", "created_at",
@@ -335,12 +338,16 @@ def word_cloud(df, query=None, save_imgs=False):
     # generating word cloud
     from wordcloud import WordCloud, STOPWORDS
     import matplotlib.pyplot as plt
+    import re
 
     stopwords = set(STOPWORDS)
     
     # adding words from query to stop words so they don't show up in the word cloud
     if query:
-        stopwords.update(query.split())
+        pattern = re.compile('[\W_]+')
+        query_split = query.lower().split()
+        query_stops = {pattern.sub('', word) for word in query_split}
+        stopwords.update(query_stops)
 
     # word cloud for text
     words_fig = plt.figure()
