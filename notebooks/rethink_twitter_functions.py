@@ -376,27 +376,39 @@ def word_cloud(df, query=None, save_imgs=False):
     return words_fig, hash_fig
 
 # plot function
-def attention_plots(df, query=None, title="Tweet count over time", xlabel="month", plot_type="line", figsize=(10,5)):
+def attention_plots(dfs, query_labels=None, title="Tweet count over time",
+                    xlabel="month", plot_type="line", figsize=(10,5)):
     
     # ensuring the correct parameters have been passed
     assert plot_type in ("line", "bar"), "Please input 'line' or 'bar' into plot_type"
     assert xlabel in ("day", "month", "year"), "Please input 'day', 'month', or 'year' into xlabel"
-        
-    # converting dates to datetime, getting counts of tweets per day
+    
     import pandas as pd
-    df["created_at"] = pd.to_datetime(df["created_at"])
-    daily_counts = test.groupby(test["created_at"].dt.date).count()
-    dates = pd.to_datetime(daily_counts.index)
+    if type(dfs) == pd.core.frame.DataFrame:
+        dfs = [dfs]
+    elif type(dfs) in (list, set, tuple):
+        if query_labels:
+            assert len(dfs) == len(query_labels), "Please make sure that the query_labels argument is the same length as the number of DataFrames."
     
     # creating figure for plot
     import matplotlib.pyplot as plt
     figure = plt.figure(figsize=figsize)
     
-    # line or bar graph, depending on input
-    if plot_type == "line":
-        plt.plot(daily_counts.index, daily_counts["text"])
-    else:
-        plt.bar(daily_counts.index, daily_counts["text"])
+    # looping through dfs and creating plots for each
+    for i in range(len(dfs)):
+        df = dfs[i]
+        label = query_labels[i]
+        
+        # converting dates to datetime, getting counts of tweets per day
+        df["created_at"] = pd.to_datetime(df["created_at"])
+        daily_counts = df.groupby(df["created_at"].dt.date).count()
+        dates = pd.to_datetime(daily_counts.index)
+
+        # line or bar graph, depending on input
+        if plot_type == "line":
+            plt.plot(daily_counts.index, daily_counts["text"], label=label)
+        else:
+            plt.bar(daily_counts.index, daily_counts["text"], label=label)
     
     # setting x-axis ticks to be month, day, or year, depending on input
     if xlabel == "month":
@@ -413,10 +425,9 @@ def attention_plots(df, query=None, title="Tweet count over time", xlabel="month
     
     # setting plot title and subtitle (if query is passed)
     plt.suptitle(title, fontsize=15)
-    if query:
-        plt.title(f"Query: {query}")
     plt.xlabel("Date")
     plt.ylabel("Number of Tweets")
+    plt.legend(loc=0)
     plt.show()
     
     return figure
