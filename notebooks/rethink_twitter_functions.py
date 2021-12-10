@@ -95,6 +95,17 @@ def tweet_df(df, response, tweet_fields):
 # function to retrieve Tweets from the past 7 days relevant to a query
 def search_7(query, start_date=None, end_date=None, max_results=20, write_csv=False, filename="search_7.csv"):
     
+    # if max_results is large, warn user of large number of API calls
+    if max_results > 50000:
+        check = input(f'''Warning: Retrieving {max_results} Tweets will result in a large number of API calls. The Twitter API only allows a limited number of calls, so make sure you have the capacity to retrieve {max_results} Tweets.\n\nDo you want to continue? [y/n]\n''')
+        while True:
+            if check == 'n':
+                raise Exception('User stopped function.')
+            elif check == 'y':
+                break
+            else:
+                check = input('Please enter either "y" or "n".')
+    
     # initializing API v1.1 instance
     api_2 = init_api_2()
     
@@ -167,6 +178,18 @@ def search_7(query, start_date=None, end_date=None, max_results=20, write_csv=Fa
 # function to search Tweets within the past 30 days
 # utilizes both API v1.1 and v2 to be consistent with 7-day search.
 def search_30(query, start_date=None, end_date=None, max_results=20, write_csv=False, filename="search_30.csv"):
+    
+    # if max_results is large, warn user of large number of API calls
+    if max_results > 1000:
+        check = input(f'''Warning: Retrieving {max_results} Tweets will result in a large number of API calls. The Twitter API only allows a limited number of calls, so make sure you have the capacity to retrieve {max_results} Tweets.\n\nDo you want to continue? [y/n]\n''')
+        while True:
+            if check == 'n':
+                raise Exception('User stopped function.')
+            elif check == 'y':
+                break
+            else:
+                check = input('Please enter either "y" or "n".')
+    
     # initializing API v1.1 instance
     api_1 = init_api_1()
     
@@ -240,6 +263,18 @@ def search_30(query, start_date=None, end_date=None, max_results=20, write_csv=F
 # function to search Tweets within the full Tweet archive
 # utilizes both API v1.1 and v2 to be consistent with 7-day search.
 def search_full(query, start_date=None, end_date=None, max_results=20, write_csv=False, filename="search_full.csv"):
+    
+    # if max_results is large, warn user of large number of API calls
+    if max_results > 1000:
+        check = input(f'''Warning: Retrieving {max_results} Tweets will result in a large number of API calls. The Twitter API only allows a limited number of calls, so make sure you have the capacity to retrieve {max_results} Tweets.\n\nDo you want to continue? [y/n]\n''')
+        while True:
+            if check == 'n':
+                raise Exception('User stopped function.')
+            elif check == 'y':
+                break
+            else:
+                check = input('Please enter either "y" or "n".')
+            
     # initializing API v1.1 instance
     api_1 = init_api_1()
     
@@ -421,7 +456,7 @@ def attention_plots(dfs, query_labels=None, title="Tweet count over time",
         period = "Y"
         tick_labels = dates.to_period(period).unique()
     tick_locs = dates.to_period(period).unique()
-    plt.xticks(ticks=tick_locs, labels=tick_labels, rotation=90)
+    plt.xticks(ticks=tick_locs, labels=tick_labels, rotation=60)
     
     # setting plot title and subtitle (if query is passed)
     plt.suptitle(title, fontsize=15)
