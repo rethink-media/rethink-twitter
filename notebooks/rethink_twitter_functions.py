@@ -96,7 +96,7 @@ def tweet_df(df, response, tweet_fields):
 def search_7(query, start_date=None, end_date=None, max_results=20, write_csv=False, filename="search_7.csv"):
     
     # if max_results is large, warn user of large number of API calls
-    if max_results > 50000:
+    if max_results > 5000:
         check = input(f'''Warning: Retrieving {max_results} Tweets will result in a large number of API calls. The Twitter API only allows a limited number of calls, so make sure you have the capacity to retrieve {max_results} Tweets.\n\nDo you want to continue? [y/n]\n''')
         while True:
             if check == 'n':
