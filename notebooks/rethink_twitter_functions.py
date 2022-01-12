@@ -344,6 +344,32 @@ def search_full(query, start_date=None, end_date=None, max_results=20, write_csv
     
     return tweets
 
+# function to sort the top influencers and return a DataFrame with the sorted data
+def top_influencers(df):
+    
+    # retrieving author_id and followers_count from the Tweet DataFrame, sorting by follower count
+    top_influencers = df.loc[:,["author_id", "followers_count"]]\
+    .drop_duplicates("author_id")\
+    .sort_values(by="followers_count", ascending=False)\
+    .reset_index()\
+    .set_index("author_id")
+    
+    # trimming DataFrame to 100 rows to minimize API calls
+    if len(top_influencers) > 100:
+        top_influencers = top_influencers.iloc[:100]
+
+    # retrieving usernames from Twitter API
+    import tweepy
+    api2 = init_api_2()
+    response = api2.get_users(ids=top_influencers.index.to_list())
+    user_data = response[0]
+    usernames = {i.id: i.username for i in user_data}
+    
+    # mapping each username to the author ID
+    top_influencers["Username"] = top_influencers.index.map(usernames)
+    
+    return top_influencers
+
 def word_cloud(df, query=None, save_imgs=False):
     # combining DataFrame text column into one long string, doing some initial pre-processing
     import pandas as pd
