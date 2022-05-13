@@ -1,5 +1,5 @@
 # rethink-twitter
-Repository for ReThink Media's Twitter API, built to analyze 9/11 anniversary coverage and then expanded for more general use.
+Repository for accessing the Twitter API, built to analyze 9/11 20th anniversary coverage and then expanded for more general use.
 Objectives include:
 - Search for Tweets relevant to a query within the past 7 days, the past 30 days, and the full Tweet archive
 - Filter for the top influencers for a specific query
