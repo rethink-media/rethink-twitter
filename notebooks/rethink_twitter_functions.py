@@ -50,9 +50,9 @@ def init_api_2():
 
 # function to parse Twitter API v2 response into a DataFrame of Tweet data
 def tweet_df(df, response, tweet_fields):
-    
+
     users = response.includes['users']
-    user_data = {user['id']: [user['public_metrics']['followers_count'], user['verified']] for user in users}
+    user_data = {user['id']: [user['public_metrics']['followers_count'], user['verified'], user['username'], user['name'], user['description']] for user in users}
         
     # looping through each Tweet in response, parsing data
     for i in range(len(response.data)):
@@ -87,6 +87,9 @@ def tweet_df(df, response, tweet_fields):
         user = user_data[tweet['author_id']]
         tweet_data['followers_count'] = user[0]
         tweet_data['verified'] = user[1]
+        tweet_data['username'] = user[2]
+        tweet_data['name'] = user[3]
+        tweet_data['description'] = user[4]
         
         df.loc[tweet_id] = tweet_data
     
@@ -120,15 +123,15 @@ def search_7(query, start_date=None, end_date=None, max_results=20, write_csv=Fa
         end_date = end_date.strftime("%Y%m%d%H%M")
     
     # setting Tweet and user data to be included in response
-    tweet_fields = ["text", "attachments", "author_id", "context_annotations", "conversation_id", "created_at",
+    tweet_fields = ["text","attachments", "author_id", "context_annotations", "conversation_id", "created_at",
                    "entities", "geo", "in_reply_to_user_id", "lang", "public_metrics", "referenced_tweets"]
-    user_fields = ["public_metrics", "verified"]
+    user_fields = ["public_metrics", "verified", "username", "name", "description"]
     
     # initializing variables for API calls and DataFrame for Tweet data
     import pandas as pd
     next_token = None
     num_tweets = 0
-    tweets = pd.DataFrame(columns=tweet_fields+['followers_count', 'verified']+
+    tweets = pd.DataFrame(columns=tweet_fields+['followers_count', 'verified', 'username', 'name', 'description']+
                           ['entities_hashtags','retweet_count','reply_count','like_count','quote_count'])
     tweets.index.name = "Tweet ID"
     
@@ -160,6 +163,7 @@ def search_7(query, start_date=None, end_date=None, max_results=20, write_csv=Fa
             next_token = None
         num_tweets += len(response.data)
         num_loops += 1
+    
         
         # adding Tweet data to DataFrame
         tweets = tweet_df(tweets, response, tweet_fields)
