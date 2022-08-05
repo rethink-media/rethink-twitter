@@ -226,12 +226,12 @@ def search_30(query, start_date=None, end_date=None, max_results=20, write_csv=F
     # setting Tweet data to be included in response_2
     tweet_fields = ["text", "attachments", "author_id", "context_annotations", "conversation_id", "created_at",
                    "entities", "geo", "in_reply_to_user_id", "lang", "public_metrics", "referenced_tweets"]
-    user_fields = ["public_metrics", "verified"]
+    user_fields = ["public_metrics", "verified", "username", "name", "description"]
     
     # initializing variables for API v2 calls and DataFrame for Tweet data
     import pandas as pd
     num_tweets = 0
-    tweets = pd.DataFrame(columns=tweet_fields+['followers_count', 'verified']+
+    tweets = pd.DataFrame(columns=tweet_fields+['followers_count', 'verified', "username", "name", "description"]+
                           ['entities_hashtags','retweet_count','reply_count','like_count','quote_count'])    
     tweets.index.name = "Tweet ID"
     
@@ -311,11 +311,11 @@ def search_full(query, start_date=None, end_date=None, max_results=20, write_csv
     # setting Tweet data to be included in response
     tweet_fields = ["text", "attachments", "author_id", "context_annotations", "conversation_id", "created_at",
                    "entities", "geo", "in_reply_to_user_id", "lang", "public_metrics", "referenced_tweets"]
-    user_fields = ["public_metrics", "verified"]
+    user_fields = ["public_metrics", "verified", "username", "name", "description"]
     
     # initializing variables for API calls and DataFrame for Tweet data
     import pandas as pd
-    tweets = pd.DataFrame(columns=tweet_fields+["followers_count", "verified"]+
+    tweets = pd.DataFrame(columns=tweet_fields+["followers_count", "verified", "username", "name", "description"]+
                           ['entities_hashtags','retweet_count','reply_count','like_count','quote_count'])
     tweets.index.name = "Tweet ID"
     
